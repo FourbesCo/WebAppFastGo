@@ -3,54 +3,138 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navigation from "./components/layout/Navigation";
-import Login from "./pages/Login";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
+import { UserLocationProvider } from "@/components/location/UserLocationProvider";
+import { Navbar } from "@/components/navbar/Navbar";
+import Index from "./pages/Index";
+import Restaurants from "./pages/Restaurants";
+import RestaurantDetail from "./pages/RestaurantDetail";
 import Menu from "./pages/Menu";
-import OpcoesPagamento from "./pages/OpcoesPagamento";
-import InserirCartao from "./pages/InserirCartao";
-import InserirProduto from "./pages/InserirProduto";
-import Produtos from "./pages/Produtos";
-import ListaItens from "./pages/ListaItens";
-import Configuracoes from "./pages/Configuracoes";
-import Clientes from "./pages/Clientes";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import Orders from "./pages/Orders";
+import Profile from "./pages/Profile";
+import Admin from "./pages/Admin";
+import RestaurantDashboard from "./pages/RestaurantDashboard";
 import NotFound from "./pages/NotFound";
-import { useIsMobile } from "./hooks/use-mobile";
 
 const queryClient = new QueryClient();
 
-const AppRoutes = () => {
-  const isMobile = useIsMobile();
+// Protected route component
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const token = localStorage.getItem("currentUser");
   
-  return (
-    <>
-      <Navigation />
-      <div className={`${isMobile ? 'pb-14 md:pb-0 md:pt-14' : 'pt-14'} w-full`}>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/opcoes-pagamento" element={<OpcoesPagamento />} />
-          <Route path="/inserir-cartao" element={<InserirCartao />} />
-          <Route path="/inserir-produto" element={<InserirProduto />} />
-          <Route path="/produtos" element={<Produtos />} />
-          <Route path="/lista-itens" element={<ListaItens />} />
-          <Route path="/configuracoes" element={<Configuracoes />} />
-          <Route path="/clientes" element={<Clientes />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </div>
-    </>
-  );
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+// Admin route component
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const userStr = localStorage.getItem("currentUser");
+  
+  if (!userStr) {
+    return <Navigate to="/" replace />;
+  }
+  
+  try {
+    const user = JSON.parse(userStr);
+    if (user.role !== "admin") {
+      return <Navigate to="/" replace />;
+    }
+  } catch (e) {
+    return <Navigate to="/" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+// Restaurant owner route component
+const RestaurantOwnerRoute = ({ children }: { children: React.ReactNode }) => {
+  const userStr = localStorage.getItem("currentUser");
+  
+  if (!userStr) {
+    return <Navigate to="/" replace />;
+  }
+  
+  try {
+    const user = JSON.parse(userStr);
+    if (user.role !== "restaurant_owner") {
+      return <Navigate to="/" replace />;
+    }
+  } catch (e) {
+    return <Navigate to="/" replace />;
+  }
+  
+  return <>{children}</>;
 };
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner position="top-center" />
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <AuthProvider>
+        <UserLocationProvider>
+          <CartProvider>
+            <Toaster />
+            <Sonner position="top-right" closeButton theme="light" />
+            <BrowserRouter>
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/restaurants" element={<Restaurants />} />
+                <Route path="/restaurants/:id" element={<RestaurantDetail />} />
+                <Route path="/menu" element={<Menu />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route 
+                  path="/checkout" 
+                  element={
+                    <ProtectedRoute>
+                      <Checkout />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/orders" 
+                  element={
+                    <ProtectedRoute>
+                      <Orders />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/profile" 
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin" 
+                  element={
+                    <AdminRoute>
+                      <Admin />
+                    </AdminRoute>
+                  } 
+                />
+                <Route 
+                  path="/restaurant-dashboard" 
+                  element={
+                    <RestaurantOwnerRoute>
+                      <RestaurantDashboard />
+                    </RestaurantOwnerRoute>
+                  } 
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </CartProvider>
+        </UserLocationProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

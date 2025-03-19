@@ -1,10 +1,8 @@
-
 #root {
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0;
+  padding: 2rem;
   text-align: center;
-  width: 100%;
-  height: 100%;
 }
 
 .logo {
@@ -41,68 +39,4 @@
 
 .read-the-docs {
   color: #888;
-}
-
-/* New professional styles */
-.card-container {
-  @apply max-w-[350px] h-[550px] mx-auto bg-gradient-to-b from-fastgo-green/5 to-fastgo-purple/10 rounded-xl overflow-hidden shadow-lg flex flex-col backdrop-blur-md border border-white/5;
-}
-
-.back-button {
-  @apply w-8 h-8 bg-fastgo-green rounded-full flex items-center justify-center text-white shadow-md hover:bg-opacity-90 transition-all transform hover:scale-105;
-}
-
-.fastgo-input {
-  @apply w-full border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-fastgo-green transition-all bg-white/5 backdrop-blur-sm text-white;
-}
-
-.fastgo-button {
-  @apply w-full bg-gradient-to-r from-fastgo-green to-fastgo-green/80 text-white rounded-xl py-3 font-medium hover:bg-opacity-90 transition-all shadow-md transform hover:scale-[1.02] active:scale-[0.98];
-}
-
-.fastgo-menu-item {
-  @apply flex flex-col items-center justify-center p-6 border border-white/10 rounded-xl bg-gradient-to-b from-white/5 to-transparent backdrop-blur-sm shadow-sm hover:shadow-md transition-all;
-}
-
-/* Menu card hover effect */
-.menu-card {
-  @apply transition-all duration-300 hover:translate-y-[-5px] hover:shadow-glow-sm;
-}
-
-/* Professional food item card */
-.food-item-card {
-  @apply border border-white/10 rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-all bg-gradient-to-b from-white/5 to-transparent backdrop-blur-sm hover:bg-white/10;
-}
-
-/* Price tag styling */
-.price-tag {
-  @apply inline-block bg-fastgo-green text-white rounded-full px-3 py-1 text-xs font-semibold shadow-sm;
-}
-
-/* Shadow glow effects */
-.shadow-glow {
-  @apply shadow-[0_0_15px_rgba(255,87,34,0.7)];
-}
-
-.shadow-glow-sm {
-  @apply shadow-[0_0_10px_rgba(76,175,80,0.3)];
-}
-
-/* Input placeholder color */
-.fastgo-input::placeholder {
-  @apply text-white/50;
-}
-
-/* Custom animations */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.animate-float {
-  animation: float 5s ease-in-out infinite;
 }

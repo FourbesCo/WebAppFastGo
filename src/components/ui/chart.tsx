@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
 
@@ -353,6 +354,103 @@ function getPayloadConfigFromPayload(
     : config[key as keyof typeof config]
 }
 
+// Create the missing chart components
+const BarChart: React.FC<{
+  data: any[];
+  [key: string]: any;
+}> = ({ data, ...props }) => {
+  const defaultConfig = Object.fromEntries(
+    data.map((item) => [
+      item.name,
+      { color: item.color || '#6366f1', label: item.name },
+    ])
+  );
+
+  const chartConfig = props.config || defaultConfig;
+
+  return (
+    <ChartContainer config={chartConfig}>
+      <RechartsPrimitive.BarChart data={data}>
+        <RechartsPrimitive.XAxis dataKey="name" stroke="#888888" />
+        <RechartsPrimitive.YAxis stroke="#888888" />
+        <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
+        <RechartsPrimitive.Tooltip content={<ChartTooltipContent />} />
+        <RechartsPrimitive.Bar dataKey="value" fill="var(--color-primary)" />
+      </RechartsPrimitive.BarChart>
+    </ChartContainer>
+  );
+};
+
+const LineChart: React.FC<{
+  data: any[];
+  [key: string]: any;
+}> = ({ data, ...props }) => {
+  const defaultConfig = Object.fromEntries(
+    data.map((item) => [
+      item.name,
+      { color: item.color || '#6366f1', label: item.name },
+    ])
+  );
+
+  const chartConfig = props.config || defaultConfig;
+
+  return (
+    <ChartContainer config={chartConfig}>
+      <RechartsPrimitive.LineChart data={data}>
+        <RechartsPrimitive.XAxis dataKey="name" stroke="#888888" />
+        <RechartsPrimitive.YAxis stroke="#888888" />
+        <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
+        <RechartsPrimitive.Tooltip content={<ChartTooltipContent />} />
+        <RechartsPrimitive.Line 
+          type="monotone" 
+          dataKey="value" 
+          stroke="var(--color-primary)" 
+          activeDot={{ r: 8 }} 
+        />
+      </RechartsPrimitive.LineChart>
+    </ChartContainer>
+  );
+};
+
+const PieChart: React.FC<{
+  data: any[];
+  [key: string]: any;
+}> = ({ data, ...props }) => {
+  const defaultConfig = Object.fromEntries(
+    data.map((item) => [
+      item.name,
+      { color: item.color || '#6366f1', label: item.name },
+    ])
+  );
+
+  const chartConfig = props.config || defaultConfig;
+
+  return (
+    <ChartContainer config={chartConfig}>
+      <RechartsPrimitive.PieChart>
+        <RechartsPrimitive.Tooltip content={<ChartTooltipContent />} />
+        <RechartsPrimitive.Pie
+          data={data}
+          dataKey="value"
+          nameKey="name"
+          cx="50%"
+          cy="50%"
+          outerRadius={80}
+          fill="var(--color-primary)"
+        >
+          {data.map((entry, index) => (
+            <RechartsPrimitive.Cell 
+              key={`cell-${index}`} 
+              fill={entry.color || `var(--color-${entry.name})`} 
+            />
+          ))}
+        </RechartsPrimitive.Pie>
+        <RechartsPrimitive.Legend content={<ChartLegendContent />} />
+      </RechartsPrimitive.PieChart>
+    </ChartContainer>
+  );
+};
+
 export {
   ChartContainer,
   ChartTooltip,
@@ -360,4 +458,7 @@ export {
   ChartLegend,
   ChartLegendContent,
   ChartStyle,
+  BarChart,
+  LineChart,
+  PieChart,
 }
